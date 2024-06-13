@@ -1,12 +1,12 @@
 // src/components/SearchPage.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import DogCard from './DogCard';
+import DogCard from './DogCard.tsx';
 import {Dog} from '../types.ts' 
 import MatchedDogModal from './MatchedDogModal.tsx';
 import BreedFilter from './BreedFilter.tsx';
 
-const SearchPage = () => {
+const SearchResults = () => {
   const [breeds, setBreeds] = useState<string[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -89,9 +89,12 @@ const SearchPage = () => {
   };
 
   return (
+
+    
     <div className="p-4 flex flex-col min-h-screen">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-4xl font-semibold">Find A Dog To Adopt</h1>
+        {/* matching button */}
         <button onClick={handleMatch} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded text-xl">Get Matched With A Dog!</button>
       </div>
 
@@ -157,4 +160,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
+export default SearchResults;

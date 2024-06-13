@@ -1,7 +1,7 @@
 import Login from './components/Login'
 import React, { useState } from 'react';
 import axios from 'axios';
-import Search from './components/Search';
+import SearchResults from './components/SearchResults';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div>
-      {authenticated ? <Search /> : <Login onLogin={handleLogin} />}
+      {authenticated ? <SearchResults /> : <Login onLogin={handleLogin} />}
     </div>
   );
   
