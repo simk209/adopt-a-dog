@@ -83,8 +83,8 @@ const SearchPage = () => {
   return (
     <div className="p-4 flex flex-col min-h-screen">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Search Dogs</h1>
-        <button onClick={handleMatch} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Generate Match</button>
+        <h1 className="text-4xl font-semibold">Find A Dog To Adopt</h1>
+        <button onClick={handleMatch} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded text-xl">Get Matched With A Dog!</button>
       </div>
 
       {/* Modal will conditionally render dog card when client selects match button */}
@@ -107,10 +107,8 @@ const SearchPage = () => {
         )}
       </MatchedDogModal>
 
-
-
       {/* breed filter drop down */}
-      <div className="mb-4">
+      <div className="mb-4 text-xl">
         <label htmlFor="breedFilter" className="font-semibold">Filter by Breed:</label>
         <select id="breedFilter" onChange={handleBreedChange} className="border border-gray-300 rounded-md px-2 py-1">
           <option value="">All Breeds</option>
