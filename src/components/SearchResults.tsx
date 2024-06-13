@@ -6,24 +6,26 @@ import MatchedDogModal from "./MatchedDogModal.tsx";
 import Filters from "./Filters.tsx";
 
 const SearchResults = () => {
+  const baseUrl = "https://frontend-take-home-service.fetch.com";
   const [breeds, setBreeds] = useState<string[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [page, setPage] = useState(0);
   const [breedFilter, setBreedFilter] = useState<string[]>([]);
   const [zipcodeFilter, setZipcodeFilter] = useState<number[]>([]);
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zipcodeInput, setZipcodeInput] = useState("");
+  const [nextReq, setNextReq] = useState(null);
+  const [prevReq, setPrevReq] = useState(null);
 
   //   fetch all breed types
+
   useEffect(() => {
     const fetchBreeds = async () => {
-      const response = await axios.get(
-        "https://frontend-take-home-service.fetch.com/dogs/breeds",
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${baseUrl}/dogs/breeds`, {
+        withCredentials: true,
+      });
       setBreeds(response.data);
     };
     fetchBreeds();
@@ -37,7 +39,7 @@ const SearchResults = () => {
       const params = {
         sort: `breed:${sortOrder}`,
         size: 12,
-        from: page * 12,
+        from: 0,
       };
 
       if (breedFilter.length > 0) {
@@ -48,28 +50,27 @@ const SearchResults = () => {
         params.zipCodes = zipcodeFilter;
       }
 
-      const response = await axios.get(
-        "https://frontend-take-home-service.fetch.com/dogs/search",
-        {
-          params,
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${baseUrl}/dogs/search`, {
+        params,
+        withCredentials: true,
+      });
       const dogIds = response.data.resultIds;
+      console.log("useffnext",response.data.next)
+      console.log("useff prev:",response.data.prev)
+      setNextReq(response.data.next);
+      setPrevReq(response.data.prev);
+
       const detailedDogs = await fetchDogDetails(dogIds);
       setDogs(detailedDogs);
     };
 
     fetchDogs();
-  }, [sortOrder, page, breedFilter, zipcodeFilter]);
-
+  }, [sortOrder, breedFilter, zipcodeFilter]);
 
   const fetchDogDetails = async (dogIds: string[]) => {
-    const response = await axios.post(
-      "https://frontend-take-home-service.fetch.com/dogs",
-      dogIds,
-      { withCredentials: true }
-    );
+    const response = await axios.post(`${baseUrl}/dogs/`, dogIds, {
+      withCredentials: true,
+    });
     return response.data;
   };
 
@@ -80,17 +81,13 @@ const SearchResults = () => {
   };
 
   const handleMatch = async () => {
-    const response = await axios.post(
-      "https://frontend-take-home-service.fetch.com/dogs/match",
-      favorites,
-      { withCredentials: true }
-    );
+    const response = await axios.post(`${baseUrl}/dogs/match`, favorites, {
+      withCredentials: true,
+    });
     const matchId = response.data.match;
-    const responseMatch = await axios.post(
-      "https://frontend-take-home-service.fetch.com/dogs",
-      [matchId],
-      { withCredentials: true }
-    );
+    const responseMatch = await axios.post(`${baseUrl}/dogs/`, [matchId], {
+      withCredentials: true,
+    });
     const matchedDog = responseMatch.data[0];
     setMatchedDog(matchedDog);
     setIsModalOpen(true);
@@ -102,7 +99,6 @@ const SearchResults = () => {
     } else {
       setBreedFilter((prev) => [...prev, breed]);
     }
-    setPage(0); // Reset page when filter changes
   };
 
   const handleZipcodeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -112,9 +108,40 @@ const SearchResults = () => {
         setZipcodeFilter((prev) => [...prev, zipcode]);
       }
       setZipcodeInput(""); // Clear the input field
-      setPage(0)// Reset page when filter changes
     }
   };
+
+  const handleNext = async () => {
+    console.log("handlenext");
+    console.log("nextReq: ", nextReq);
+    if (nextReq != undefined) {
+      const response = await axios.get(`${baseUrl}${nextReq}`, {
+        withCredentials: true,
+      });
+      console.log("response", response);
+
+      const dogIds = response.data.resultIds;
+      setNextReq(response.data.next);
+      setPrevReq(response.data.prev);
+      const detailedDogs = await fetchDogDetails(dogIds);
+      setDogs(detailedDogs);
+    }
+  };
+
+  const handlePrev = async () => {
+    if (prevReq) {
+      const response = await axios.get(`${baseUrl}${prevReq}`, {
+        withCredentials: true,
+      });
+
+      const dogIds = response.data.resultIds;
+      setNextReq(response.data.next);
+      setPrevReq(response.data.prev);
+      const detailedDogs = await fetchDogDetails(dogIds);
+      setDogs(detailedDogs);
+    }
+  };
+
   const clearFilters = () => {
     setBreedFilter([]);
     setZipcodeFilter([]);
@@ -204,13 +231,13 @@ const SearchResults = () => {
       {/* next and prev buttons */}
       <div className="mt-4 px-32 py-6 flex justify-between">
         <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+          onClick={handlePrev}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Previous Page
         </button>
         <button
-          onClick={() => setPage((prev) => prev + 1)}
+          onClick={handleNext}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Next Page
