@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 
-interface Props {
+interface BreedFilterProps {
   breeds: string[];
   breedFilter: string[];
   handleBreedChange: (breed: string) => void;
-  clearFilters: () => void;
 }
 
-const BreedFilter: React.FC<Props> = ({ breeds, breedFilter, handleBreedChange, clearFilters }) => {
+const BreedFilter = ({ breeds, breedFilter, handleBreedChange }:BreedFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {

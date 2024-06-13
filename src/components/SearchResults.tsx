@@ -4,7 +4,7 @@ import axios from 'axios';
 import DogCard from './DogCard.tsx';
 import {Dog} from '../types.ts' 
 import MatchedDogModal from './MatchedDogModal.tsx';
-import BreedFilter from './BreedFilter.tsx';
+import Filters from './Filters.tsx';
 
 const SearchResults = () => {
   const [breeds, setBreeds] = useState<string[]>([]);
@@ -134,33 +134,16 @@ const SearchResults = () => {
         )}
       </MatchedDogModal>
 
-      {/* breed filter drop down */}
-      <BreedFilter breeds={breeds} breedFilter={breedFilter} handleBreedChange={handleBreedChange} clearFilters={clearFilters} />
-
-      {/* zip code input */}
-      <div className="mb-4">
-        <label htmlFor="zipcodeInput" className="block font-semibold mb-2">Filter by Zip Code:</label>
-        <input
-          type="text"
-          id="zipcodeInput"
-          value={zipcodeInput}
-          onChange={(e) => setZipcodeInput(e.target.value)}
-          onKeyDown={handleZipcodeKeyDown}
-          className="border border-gray-300 rounded-md px-2 py-1 w-full"
-          placeholder="Enter zip code and press Enter"
-        />
-        {/* display applied zipcodes */}
-        <div className="mt-2">
-          {zipcodeFilter.map((zip, index) => (
-            <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              {zip}
-            </span>
-          ))}
-        </div>
-      </div>
-      {/* clear filters */}
-      <button onClick={clearFilters}>Clear Filters</button>
-
+      <Filters
+        breeds={breeds}
+        breedFilter={breedFilter}
+        handleBreedChange={handleBreedChange}
+        zipcodeFilter={zipcodeFilter}
+        handleZipcodeKeyDown={handleZipcodeKeyDown}
+        setZipcodeInput={setZipcodeInput}
+        zipcodeInput={zipcodeInput}
+        clearFilters={clearFilters}
+      />
       
 
       {/* sort dropdown */}
