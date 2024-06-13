@@ -5,6 +5,14 @@ import { Dog } from "../types.ts";
 import MatchedDogModal from "./MatchedDogModal.tsx";
 import Filters from "./Filters.tsx";
 
+interface DogSearchParams {
+  sort: string;
+  size: number;
+  from: number;
+  breeds?: string[];
+  zipCodes?: number[];
+}
+
 const SearchResults = () => {
   const baseUrl = "https://frontend-take-home-service.fetch.com";
   const [breeds, setBreeds] = useState<string[]>([]);
@@ -42,7 +50,7 @@ const SearchResults = () => {
   useEffect(() => {
     console.log("USE EFFECT");
     const fetchDogs = async () => {
-      const params = {
+      const params:DogSearchParams = {
         sort: `breed:${sortOrder}`,
         size: SIZE,
         from: 0,

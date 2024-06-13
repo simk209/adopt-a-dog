@@ -1,7 +1,8 @@
 import Login from "./components/Login";
-import React, { useState } from "react";
 import axios from "axios";
 import SearchResults from "./components/SearchResults";
+import { useState } from "react";
+
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);

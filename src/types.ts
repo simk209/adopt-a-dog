@@ -6,4 +6,4 @@ export interface Dog {
     zip_code: string;
     breed: string;
   }
-  
+
