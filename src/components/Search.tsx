@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DogCard from './DogCard';
 import {Dog} from '../types.ts' 
+import MatchedDogModal from './MatchedDogModal.tsx';
 
 const SearchPage = () => {
   const [breeds, setBreeds] = useState<string[]>([]);
@@ -12,6 +13,7 @@ const SearchPage = () => {
   const [page, setPage] = useState(0);
   const [breedFilter, setBreedFilter] = useState<string | null>(null);
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 //   fetch all breed types 
   useEffect(() => {
@@ -19,7 +21,6 @@ const SearchPage = () => {
       const response = await axios.get('https://frontend-take-home-service.fetch.com/dogs/breeds', { withCredentials: true });
       setBreeds(response.data);
     };
-
     fetchBreeds();
   }, []);
   
@@ -71,6 +72,7 @@ const SearchPage = () => {
     const responseMatch = await axios.post('https://frontend-take-home-service.fetch.com/dogs', [matchId], { withCredentials: true });
     const matchedDog = responseMatch.data[0];
     setMatchedDog(matchedDog);
+    setIsModalOpen(true)
   };
 
   const handleBreedChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -79,42 +81,33 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 flex flex-col min-h-screen">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Search Dogs</h1>
         <button onClick={handleMatch} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Generate Match</button>
       </div>
-      {/* conditionally render matched dog */}
-      {matchedDog && (
-        <div className="mb-4 " >
-          <h2 className="text-xl font-semibold mb-2">Matched Dog</h2>
-          <DogCard
-            key={matchedDog.id}
-            id={matchedDog.id}
-            name={matchedDog.name}
-            age={matchedDog.age}
-            breed={matchedDog.breed}
-            zipcode={matchedDog.zip_code}
-            img={matchedDog.img}
-            isFavorite={favorites.includes(matchedDog.id)}
-            handleFavorite={handleFavorite}
-          />
-        </div>
-      )}
 
-      <div className="flex items-center space-x-4 mb-4">
-        <div className="flex space-x-4">
-          <label htmlFor="sortOrder" className="font-semibold">Sort by:</label>
-          <select id="sortOrder" onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')} className="border border-gray-300 rounded-md px-2 py-1">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
-        </div>
-        <div className="flex space-x-4">
-          <button onClick={() => setPage((prev) => Math.max(prev - 1, 0))} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous Page</button>
-          <button onClick={() => setPage((prev) => prev + 1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next Page</button>
-        </div>
-      </div>
+      {/* Modal will conditionally render dog card when client selects match button */}
+      <MatchedDogModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        {matchedDog && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Matched Dog</h2>
+            <DogCard
+              key={matchedDog.id}
+              id={matchedDog.id}
+              name={matchedDog.name}
+              age={matchedDog.age}
+              breed={matchedDog.breed}
+              zipcode={matchedDog.zip_code}
+              img={matchedDog.img}
+              isFavorite={favorites.includes(matchedDog.id)}
+              handleFavorite={handleFavorite}
+            />
+          </div>
+        )}
+      </MatchedDogModal>
+
+
 
       {/* breed filter drop down */}
       <div className="mb-4">
@@ -127,8 +120,19 @@ const SearchPage = () => {
         </select>
       </div>
 
+      {/* sort dropdown */}
+      <div className="flex items-center space-x-4 mb-4">
+        <div className="flex space-x-4 ml-auto">
+          <label htmlFor="sortOrder" className="font-semibold">Sort by:</label>
+          <select id="sortOrder" onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')} className="border border-gray-300 rounded-md px-2 py-1">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+      </div>
+
       {/* grid displaying filtered results */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center items-center">
         {dogs.map((dog) => (
           <DogCard
             key={dog.id}
@@ -142,6 +146,13 @@ const SearchPage = () => {
             handleFavorite={handleFavorite}
           />
         ))}
+      </div>
+
+
+      {/* next and prev buttons */}
+      <div className="mt-4 px-32 py-6 flex justify-between">
+        <button onClick={() => setPage((prev) => Math.max(prev - 1, 0))} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous Page</button>
+        <button onClick={() => setPage((prev) => prev + 1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next Page</button>
       </div>
     </div>
   );

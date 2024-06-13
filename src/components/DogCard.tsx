@@ -14,8 +14,8 @@ interface DogCardProps {
 
 const DogCard: React.FC<DogCardProps> = ({ id, name, age, breed, zipcode, img, isFavorite, handleFavorite, }) => {
   return (
-    <div className="max-w-xs rounded overflow-hidden shadow-lg">
-      <img className="w-full h-40 object-cover" src={img} alt={name} />
+    <div className="max-w-xs w-72 rounded overflow-hidden shadow-lg">
+      <img className="w-full h-80 object-cover" src={img} alt={name} />
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
         <p className="text-gray-700 text-base">
