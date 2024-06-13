@@ -18,6 +18,11 @@ const SearchResults = () => {
   const [zipcodeInput, setZipcodeInput] = useState("");
   const [nextReq, setNextReq] = useState(null);
   const [prevReq, setPrevReq] = useState(null);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const SIZE = 12;
+
+  // keep track page number
 
   //   fetch all breed types
 
@@ -35,10 +40,11 @@ const SearchResults = () => {
   // upon retrieving the dogIds, post req to /dogs to get dog objects
   // update dogs state with dogdetails
   useEffect(() => {
+    console.log("USE EFFECT");
     const fetchDogs = async () => {
       const params = {
         sort: `breed:${sortOrder}`,
-        size: 12,
+        size: SIZE,
         from: 0,
       };
 
@@ -55,10 +61,15 @@ const SearchResults = () => {
         withCredentials: true,
       });
       const dogIds = response.data.resultIds;
-      console.log("useffnext",response.data.next)
-      console.log("useff prev:",response.data.prev)
+
+      console.log("response useeff", response);
+      console.log("useffnext", response.data.next);
       setNextReq(response.data.next);
       setPrevReq(response.data.prev);
+      setTotal(response.data.total);
+      setPage(1);
+
+      console.log("nextReq", nextReq);
 
       const detailedDogs = await fetchDogDetails(dogIds);
       setDogs(detailedDogs);
@@ -114,7 +125,8 @@ const SearchResults = () => {
   const handleNext = async () => {
     console.log("handlenext");
     console.log("nextReq: ", nextReq);
-    if (nextReq != undefined) {
+
+    if (total > page * 12) {
       const response = await axios.get(`${baseUrl}${nextReq}`, {
         withCredentials: true,
       });
@@ -125,11 +137,12 @@ const SearchResults = () => {
       setPrevReq(response.data.prev);
       const detailedDogs = await fetchDogDetails(dogIds);
       setDogs(detailedDogs);
+      setPage((prev) => prev + 1);
     }
   };
 
   const handlePrev = async () => {
-    if (prevReq) {
+    if (page > 1) {
       const response = await axios.get(`${baseUrl}${prevReq}`, {
         withCredentials: true,
       });
@@ -139,6 +152,7 @@ const SearchResults = () => {
       setPrevReq(response.data.prev);
       const detailedDogs = await fetchDogDetails(dogIds);
       setDogs(detailedDogs);
+      setPage((prev) => prev - 1);
     }
   };
 
