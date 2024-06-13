@@ -42,6 +42,7 @@ const SearchPage = () => {
         params,
         withCredentials: true,
       });
+      console.log("response",response)
       const dogIds = response.data.resultIds;
       const detailedDogs = await fetchDogDetails(dogIds);
       setDogs(detailedDogs);
@@ -50,6 +51,11 @@ const SearchPage = () => {
     fetchDogs();
   }, [sortOrder, page, breedFilter]);
 
+  // const nextPage = ()=>{
+
+  // }
+
+  
   const fetchDogDetails = async (dogIds: string[]) => {
     const response = await axios.post('https://frontend-take-home-service.fetch.com/dogs', dogIds, { withCredentials: true });
     return response.data;
@@ -65,6 +71,11 @@ const SearchPage = () => {
     const responseMatch = await axios.post('https://frontend-take-home-service.fetch.com/dogs', [matchId], { withCredentials: true });
     const matchedDog = responseMatch.data[0];
     setMatchedDog(matchedDog);
+  };
+
+  const handleBreedChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setBreedFilter(e.target.value || null);
+    setPage(0); 
   };
 
   return (
@@ -108,7 +119,7 @@ const SearchPage = () => {
       {/* breed filter drop down */}
       <div className="mb-4">
         <label htmlFor="breedFilter" className="font-semibold">Filter by Breed:</label>
-        <select id="breedFilter" onChange={(e) => setBreedFilter(e.target.value || null)} className="border border-gray-300 rounded-md px-2 py-1">
+        <select id="breedFilter" onChange={handleBreedChange} className="border border-gray-300 rounded-md px-2 py-1">
           <option value="">All Breeds</option>
           {breeds.map((breed) => (
             <option key={breed} value={breed}>{breed}</option>

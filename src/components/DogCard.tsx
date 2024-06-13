@@ -6,13 +6,13 @@ interface DogCardProps {
   name: string;
   age: number;
   breed: string;
+  zipcode: string
   img: string;
   isFavorite: boolean;
   handleFavorite: (id: string) => void;
-  zipcode: string
 }
 
-const DogCard: React.FC<DogCardProps> = ({ id, name, age, breed, img, isFavorite, handleFavorite, zipcode }) => {
+const DogCard: React.FC<DogCardProps> = ({ id, name, age, breed, zipcode, img, isFavorite, handleFavorite, }) => {
   return (
     <div className="max-w-xs rounded overflow-hidden shadow-lg">
       <img className="w-full h-40 object-cover" src={img} alt={name} />
