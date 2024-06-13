@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DogCard from './DogCard';
+import {Dog} from '../types.ts' 
 
 const SearchPage = () => {
   const [breeds, setBreeds] = useState<string[]>([]);
@@ -12,6 +13,7 @@ const SearchPage = () => {
   const [breedFilter, setBreedFilter] = useState<string | null>(null);
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
 
+//   fetch all breed types 
   useEffect(() => {
     const fetchBreeds = async () => {
       const response = await axios.get('https://frontend-take-home-service.fetch.com/dogs/breeds', { withCredentials: true });
@@ -20,10 +22,13 @@ const SearchPage = () => {
 
     fetchBreeds();
   }, []);
-
+  
+// filter the search results, passing in query params for breed, sort, size, and from
+// upon retrieving the dogIds, post req to /dogs to get dog objects
+// update dogs state with dogdetails
   useEffect(() => {
     const fetchDogs = async () => {
-      const params: Record<string, unknown> = {
+      const params = {
         sort: `breed:${sortOrder}`,
         size: 12,
         from: page * 12,
@@ -68,8 +73,9 @@ const SearchPage = () => {
         <h1 className="text-2xl font-semibold">Search Dogs</h1>
         <button onClick={handleMatch} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Generate Match</button>
       </div>
+      {/* conditionally render matched dog */}
       {matchedDog && (
-        <div className="mb-4">
+        <div className="mb-4 " >
           <h2 className="text-xl font-semibold mb-2">Matched Dog</h2>
           <DogCard
             key={matchedDog.id}
@@ -84,6 +90,7 @@ const SearchPage = () => {
           />
         </div>
       )}
+
       <div className="flex items-center space-x-4 mb-4">
         <div className="flex space-x-4">
           <label htmlFor="sortOrder" className="font-semibold">Sort by:</label>
@@ -97,6 +104,8 @@ const SearchPage = () => {
           <button onClick={() => setPage((prev) => prev + 1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next Page</button>
         </div>
       </div>
+
+      {/* breed filter drop down */}
       <div className="mb-4">
         <label htmlFor="breedFilter" className="font-semibold">Filter by Breed:</label>
         <select id="breedFilter" onChange={(e) => setBreedFilter(e.target.value || null)} className="border border-gray-300 rounded-md px-2 py-1">
@@ -106,6 +115,8 @@ const SearchPage = () => {
           ))}
         </select>
       </div>
+
+      {/* grid displaying filtered results */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {dogs.map((dog) => (
           <DogCard
