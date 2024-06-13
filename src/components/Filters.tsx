@@ -25,7 +25,7 @@ const Filters = ({
   clearFilters,
 }: FiltersProps) => {
   return (
-    <div className="filters-container">
+    <div className="filters-container text-xl">
       <BreedFilter
         breeds={breeds}
         breedFilter={breedFilter}

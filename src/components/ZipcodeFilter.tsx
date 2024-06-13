@@ -16,13 +16,13 @@ const ZipcodeFilter = ({
       <label htmlFor="zipcodeInput" className="block font-semibold mb-2">
         Filter by Zip Code:
       </label>
-      <input
+      <input 
         type="text"
         id="zipcodeInput"
         value={zipcodeInput}
         onChange={(e) => setZipcodeInput(e.target.value)}
         onKeyDown={handleZipcodeKeyDown}
-        className="border border-gray-300 rounded-md px-2 py-1 w-full"
+        className="border border-gray-300 rounded-md px-2 py-1 w-80"
         placeholder="Enter zip code and press Enter"
       />
       {/* display applied zipcodes */}

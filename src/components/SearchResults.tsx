@@ -1,4 +1,3 @@
-// src/components/SearchPage.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DogCard from "./DogCard.tsx";
@@ -17,7 +16,7 @@ const SearchResults = () => {
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zipcodeInput, setZipcodeInput] = useState("");
-  console.log("zipcodeFilter", zipcodeFilter);
+
   //   fetch all breed types
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -64,9 +63,6 @@ const SearchResults = () => {
     fetchDogs();
   }, [sortOrder, page, breedFilter, zipcodeFilter]);
 
-  // const nextPage = ()=>{
-
-  // }
 
   const fetchDogDetails = async (dogIds: string[]) => {
     const response = await axios.post(
@@ -116,6 +112,7 @@ const SearchResults = () => {
         setZipcodeFilter((prev) => [...prev, zipcode]);
       }
       setZipcodeInput(""); // Clear the input field
+      setPage(0)// Reset page when filter changes
     }
   };
   const clearFilters = () => {

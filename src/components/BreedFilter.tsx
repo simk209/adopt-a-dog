@@ -18,7 +18,7 @@ const BreedFilter = ({
   };
 
   return (
-    <div className="mb-4 text-xl relative w-1/3 cursor-pointer">
+    <div className="mb-4 relative w-1/3 cursor-pointer">
       <div className="flex items-center " onClick={toggleDropdown}>
         <label className="font-semibold flex items-center ">
           Filter by Breed:{" "}
