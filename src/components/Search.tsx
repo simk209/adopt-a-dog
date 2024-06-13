@@ -4,6 +4,7 @@ import axios from 'axios';
 import DogCard from './DogCard';
 import {Dog} from '../types.ts' 
 import MatchedDogModal from './MatchedDogModal.tsx';
+import BreedFilter from './BreedFilter.tsx';
 
 const SearchPage = () => {
   const [breeds, setBreeds] = useState<string[]>([]);
@@ -11,7 +12,7 @@ const SearchPage = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [page, setPage] = useState(0);
-  const [breedFilter, setBreedFilter] = useState<string | null>(null);
+  const [breedFilter, setBreedFilter] = useState<string[]>([]);
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -35,15 +36,14 @@ const SearchPage = () => {
         from: page * 12,
       };
 
-      if (breedFilter) {
-        params.breeds = [breedFilter];
+      if (breedFilter.length > 0) {
+        params.breeds = breedFilter;
       }
 
       const response = await axios.get('https://frontend-take-home-service.fetch.com/dogs/search', {
         params,
         withCredentials: true,
       });
-      console.log("response",response)
       const dogIds = response.data.resultIds;
       const detailedDogs = await fetchDogDetails(dogIds);
       setDogs(detailedDogs);
@@ -75,9 +75,17 @@ const SearchPage = () => {
     setIsModalOpen(true)
   };
 
-  const handleBreedChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setBreedFilter(e.target.value || null);
-    setPage(0); 
+  const handleBreedChange = (breed: string) => {
+    if (breedFilter.includes(breed)) {
+      setBreedFilter((prev) => prev.filter((b) => b !== breed));
+    } else {
+      setBreedFilter((prev) => [...prev, breed]);
+    }
+    setPage(0); // Reset page when filter changes
+  };
+
+  const clearFilters = () => {
+    setBreedFilter([]); // Clear all selected breeds
   };
 
   return (
@@ -108,23 +116,16 @@ const SearchPage = () => {
       </MatchedDogModal>
 
       {/* breed filter drop down */}
-      <div className="mb-4 text-xl">
-        <label htmlFor="breedFilter" className="font-semibold">Filter by Breed:</label>
-        <select id="breedFilter" onChange={handleBreedChange} className="border border-gray-300 rounded-md px-2 py-1">
-          <option value="">All Breeds</option>
-          {breeds.map((breed) => (
-            <option key={breed} value={breed}>{breed}</option>
-          ))}
-        </select>
-      </div>
+      <BreedFilter breeds={breeds} breedFilter={breedFilter} handleBreedChange={handleBreedChange} clearFilters={clearFilters} />
+
 
       {/* sort dropdown */}
       <div className="flex items-center space-x-4 mb-4">
         <div className="flex space-x-4 ml-auto">
           <label htmlFor="sortOrder" className="font-semibold">Sort by:</label>
           <select id="sortOrder" onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')} className="border border-gray-300 rounded-md px-2 py-1">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
+            <option value="asc">A-Z</option>
+            <option value="desc">Z-A</option>
           </select>
         </div>
       </div>
