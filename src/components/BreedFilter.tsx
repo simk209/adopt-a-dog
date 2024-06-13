@@ -15,11 +15,10 @@ const BreedFilter: React.FC<Props> = ({ breeds, breedFilter, handleBreedChange, 
   };
 
   return (
-    <div className="mb-4 text-xl relative w-96">
-      <div className="flex items-center justify-between cursor-pointer" onClick={toggleDropdown}>
-        <label className="font-semibold flex items-center">Filter by Breed: {breedFilter.length > 0 && <span className="ml-2">({breedFilter.length})</span>}</label>
-        <button onClick={clearFilters} className="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded">Clear Filters</button>
-        <div className="w-6 h-6 ml-2 flex items-center justify-center bg-gray-200 rounded">
+    <div className="mb-4 text-xl relative w-1/3 cursor-pointer">
+      <div className="flex items-center " onClick={toggleDropdown}>
+        <label className="font-semibold flex items-center ">Filter by Breed: {breedFilter.length > 0 && <span className="ml-2">({breedFilter.length})</span>}</label>
+        <div className="w-6 h-6 mx-4 flex items-center justify-center bg-gray-200 rounded ">
           <span className={`transform ${isOpen ? 'rotate-180' : ''}`}>&#9660;</span>
         </div>
       </div>

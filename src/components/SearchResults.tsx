@@ -13,9 +13,11 @@ const SearchResults = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [page, setPage] = useState(0);
   const [breedFilter, setBreedFilter] = useState<string[]>([]);
+  const [zipcodeFilter, setZipcodeFilter] = useState<number[]>([])
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [zipcodeInput, setZipcodeInput] = useState('');
+  console.log("zipcodeFilter",zipcodeFilter);
 //   fetch all breed types 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -40,6 +42,10 @@ const SearchResults = () => {
         params.breeds = breedFilter;
       }
 
+      if (zipcodeFilter.length > 0){
+        params.zipCodes = zipcodeFilter
+      }
+
       const response = await axios.get('https://frontend-take-home-service.fetch.com/dogs/search', {
         params,
         withCredentials: true,
@@ -50,7 +56,7 @@ const SearchResults = () => {
     };
 
     fetchDogs();
-  }, [sortOrder, page, breedFilter]);
+  }, [sortOrder, page, breedFilter, zipcodeFilter]);
 
   // const nextPage = ()=>{
 
@@ -84,8 +90,18 @@ const SearchResults = () => {
     setPage(0); // Reset page when filter changes
   };
 
+  const handleZipcodeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const zipcode = parseInt(zipcodeInput.trim());
+      if (!isNaN(zipcode) && !zipcodeFilter.includes(zipcode)) {
+        setZipcodeFilter((prev) => [...prev, zipcode]);
+      }
+      setZipcodeInput(''); // Clear the input field
+    }
+  };
   const clearFilters = () => {
-    setBreedFilter([]); // Clear all selected breeds
+    setBreedFilter([]); 
+    setZipcodeFilter([])
   };
 
   return (
@@ -121,6 +137,31 @@ const SearchResults = () => {
       {/* breed filter drop down */}
       <BreedFilter breeds={breeds} breedFilter={breedFilter} handleBreedChange={handleBreedChange} clearFilters={clearFilters} />
 
+      {/* zip code input */}
+      <div className="mb-4">
+        <label htmlFor="zipcodeInput" className="block font-semibold mb-2">Filter by Zip Code:</label>
+        <input
+          type="text"
+          id="zipcodeInput"
+          value={zipcodeInput}
+          onChange={(e) => setZipcodeInput(e.target.value)}
+          onKeyDown={handleZipcodeKeyDown}
+          className="border border-gray-300 rounded-md px-2 py-1 w-full"
+          placeholder="Enter zip code and press Enter"
+        />
+        {/* display applied zipcodes */}
+        <div className="mt-2">
+          {zipcodeFilter.map((zip, index) => (
+            <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+              {zip}
+            </span>
+          ))}
+        </div>
+      </div>
+      {/* clear filters */}
+      <button onClick={clearFilters}>Clear Filters</button>
+
+      
 
       {/* sort dropdown */}
       <div className="flex items-center space-x-4 mb-4">
