@@ -1,32 +1,44 @@
 // src/components/DogCard.tsx
-import React from 'react';
+import React from "react";
 
 interface DogCardProps {
   id: string;
   name: string;
   age: number;
   breed: string;
-  zipcode: string
+  zipcode: string;
   img: string;
   isFavorite: boolean;
   handleFavorite: (id: string) => void;
 }
 
-const DogCard: React.FC<DogCardProps> = ({ id, name, age, breed, zipcode, img, isFavorite, handleFavorite, }) => {
+const DogCard: React.FC<DogCardProps> = ({
+  id,
+  name,
+  age,
+  breed,
+  zipcode,
+  img,
+  isFavorite,
+  handleFavorite,
+}) => {
   return (
     <div className="max-w-xs w-72 rounded overflow-hidden shadow-lg">
       <img className="w-full h-80 object-cover" src={img} alt={name} />
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
         <p className="text-gray-700 text-base">
-          Age: {age}<br />
-          Breed: {breed}<br />
+          Age: {age}
+          <br />
+          Breed: {breed}
+          <br />
           Zipcode: {zipcode}
         </p>
-        <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        <button
+          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={() => handleFavorite(id)}
         >
-          {isFavorite ? 'Unfavorite' : 'Favorite'}
+          {isFavorite ? "Unfavorite" : "Favorite"}
         </button>
       </div>
     </div>
@@ -34,4 +46,3 @@ const DogCard: React.FC<DogCardProps> = ({ id, name, age, breed, zipcode, img, i
 };
 
 export default DogCard;
-

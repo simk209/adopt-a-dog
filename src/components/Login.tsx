@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const Login = ({ onLogin }: { onLogin: (name: string, email: string) => void }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+const Login = ({
+  onLogin,
+}: {
+  onLogin: (name: string, email: string) => void;
+}) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +19,9 @@ const Login = ({ onLogin }: { onLogin: (name: string, email: string) => void }) 
         <h2 className="text-4xl font-semibold mb-8 text-center">Log In</h2>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
           <div>
-            <label htmlFor="name" className="font-semibold text-lg">Name:</label>
+            <label htmlFor="name" className="font-semibold text-lg">
+              Name:
+            </label>
             <input
               type="text"
               id="name"
@@ -27,7 +33,9 @@ const Login = ({ onLogin }: { onLogin: (name: string, email: string) => void }) 
             />
           </div>
           <div>
-            <label htmlFor="email" className="font-semibold text-lg">Email:</label>
+            <label htmlFor="email" className="font-semibold text-lg">
+              Email:
+            </label>
             <input
               type="email"
               id="email"
@@ -51,4 +59,3 @@ const Login = ({ onLogin }: { onLogin: (name: string, email: string) => void }) 
 };
 
 export default Login;
-
