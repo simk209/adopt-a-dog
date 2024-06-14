@@ -2,7 +2,7 @@ interface ZipcodeFilterProps {
   zipcodeInput: string;
   setZipcodeInput: React.Dispatch<React.SetStateAction<string>>;
   handleZipcodeKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  zipcodeFilter: number[];
+  zipcodeFilter: string[];
 }
 
 const ZipcodeFilter = ({

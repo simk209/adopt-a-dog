@@ -10,7 +10,7 @@ interface DogSearchParams {
   size: number;
   from: number;
   breeds?: string[];
-  zipCodes?: number[];
+  zipCodes?: string[];
 }
 
 const SearchResults = () => {
@@ -20,7 +20,7 @@ const SearchResults = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [breedFilter, setBreedFilter] = useState<string[]>([]);
-  const [zipcodeFilter, setZipcodeFilter] = useState<number[]>([]);
+  const [zipcodeFilter, setZipcodeFilter] = useState<string[]>([]);
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zipcodeInput, setZipcodeInput] = useState("");
@@ -28,12 +28,10 @@ const SearchResults = () => {
   const [prevReq, setPrevReq] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+
   const SIZE = 12;
 
-  // keep track page number
-
   //   fetch all breed types
-
   useEffect(() => {
     const fetchBreeds = async () => {
       const response = await axios.get(`${baseUrl}/dogs/breeds`, {
@@ -50,7 +48,7 @@ const SearchResults = () => {
   useEffect(() => {
     console.log("USE EFFECT");
     const fetchDogs = async () => {
-      const params:DogSearchParams = {
+      const params: DogSearchParams = {
         sort: `breed:${sortOrder}`,
         size: SIZE,
         from: 0,
@@ -122,8 +120,8 @@ const SearchResults = () => {
 
   const handleZipcodeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const zipcode = parseInt(zipcodeInput.trim());
-      if (!isNaN(zipcode) && !zipcodeFilter.includes(zipcode)) {
+      const zipcode = zipcodeInput.trim();
+      if (zipcode && !zipcodeFilter.includes(zipcode)) {
         setZipcodeFilter((prev) => [...prev, zipcode]);
       }
       setZipcodeInput(""); // Clear the input field
@@ -169,6 +167,7 @@ const SearchResults = () => {
     setZipcodeFilter([]);
   };
 
+
   return (
     <div className="p-4 flex flex-col min-h-screen">
       <div className="mb-4 flex items-center justify-between">
@@ -189,7 +188,9 @@ const SearchResults = () => {
       >
         {matchedDog && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">Matched Dog</h2>
+            <h2 className="text-xl font-semibold mb-2"> 
+              You matched with {matchedDog.name}!
+            </h2>
             <DogCard
               key={matchedDog.id}
               id={matchedDog.id}

@@ -7,7 +7,7 @@ interface FiltersProps {
   breeds: string[];
   breedFilter: string[];
   handleBreedChange: (breed: string) => void;
-  zipcodeFilter: number[];
+  zipcodeFilter: string[];
   handleZipcodeKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   setZipcodeInput: React.Dispatch<React.SetStateAction<string>>;
   zipcodeInput: string;
