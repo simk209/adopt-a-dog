@@ -98,6 +98,7 @@ const SearchPage = () => {
   // handleMatch sends a req to find the dogId for the matched dog, then a separate req is sent to get the dog object details corresponding to that id. Those details will be used to populate the MatchedDogModal.
   // handleMatch also sets isModalOpen to true in order for the modal to render
   const handleMatch = async () => {
+    if (favorites.length === 0) return;
     const response = await axios.post(`${baseUrl}/dogs/match`, favorites, {
       withCredentials: true,
     });
@@ -172,7 +173,13 @@ const SearchPage = () => {
         {/* matching button */}
         <button
           onClick={handleMatch}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded text-xl"
+          disabled={favorites.length === 0}
+          className={`font-bold py-2 px-4 mt-4 rounded text-xl ${
+            favorites.length > 0
+              ? "bg-blue-500 hover:bg-blue-700 text-white"
+              : "bg-gray-400 text-gray-700 cursor-not-allowed"
+          }`}
+          
         >
           Get Matched With A Dog!
         </button>
