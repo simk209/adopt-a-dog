@@ -257,7 +257,7 @@ const SearchPage = () => {
           Previous Page
         </button>
 
-        <div>{page} of {Math.ceil(total/SIZE)}</div>
+        <div>{page} of {Math.max(Math.ceil(total/SIZE),1)}</div>
 
         <button
           onClick={handleNext}
