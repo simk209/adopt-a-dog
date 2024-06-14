@@ -13,8 +13,9 @@ interface DogSearchParams {
   zipCodes?: string[];
 }
 
-const SearchResults = () => {
+const SearchPage = () => {
   const baseUrl = "https://frontend-take-home-service.fetch.com";
+  const SIZE = 12;
   const [breeds, setBreeds] = useState<string[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -29,9 +30,7 @@ const SearchResults = () => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const SIZE = 12;
-
-  //   fetch all breed types
+  // fetch all breed types from the API on mount
   useEffect(() => {
     const fetchBreeds = async () => {
       const response = await axios.get(`${baseUrl}/dogs/breeds`, {
@@ -42,11 +41,10 @@ const SearchResults = () => {
     fetchBreeds();
   }, []);
 
-  // filter the search results, passing in query params for breed, sort, size, and from
-  // upon retrieving the dogIds, post req to /dogs to get dog objects
-  // update dogs state with dogdetails
+  // on mount and whenever filter/sortOrder changes (e.g.: a new breed is added), fetch the first page of dogIds that match the filters and sort order
+  // upon retrieving the dogIds, post req to /dogs to retrieve dog object details
+  // update "dogs" state variable with dog object details
   useEffect(() => {
-    console.log("USE EFFECT");
     const fetchDogs = async () => {
       const params: DogSearchParams = {
         sort: `breed:${sortOrder}`,
@@ -54,10 +52,12 @@ const SearchResults = () => {
         from: 0,
       };
 
+      // if breed filters were selected, use breeds query params
       if (breedFilter.length > 0) {
         params.breeds = breedFilter;
       }
 
+      // if zipcode filters were selected, use breeds query params
       if (zipcodeFilter.length > 0) {
         params.zipCodes = zipcodeFilter;
       }
@@ -68,14 +68,11 @@ const SearchResults = () => {
       });
       const dogIds = response.data.resultIds;
 
-      console.log("response useeff", response);
-      console.log("useffnext", response.data.next);
+      // update state variables to save nextReq (query for next page of results), prevReq (query for prev page of results), total num of results, and reset page number to 1. These state variables are later used for pagination.
       setNextReq(response.data.next);
       setPrevReq(response.data.prev);
       setTotal(response.data.total);
       setPage(1);
-
-      console.log("nextReq", nextReq);
 
       const detailedDogs = await fetchDogDetails(dogIds);
       setDogs(detailedDogs);
@@ -85,18 +82,21 @@ const SearchResults = () => {
   }, [sortOrder, breedFilter, zipcodeFilter]);
 
   const fetchDogDetails = async (dogIds: string[]) => {
-    const response = await axios.post(`${baseUrl}/dogs/`, dogIds, {
+    const response = await axios.post(`${baseUrl}/dogs`, dogIds, {
       withCredentials: true,
     });
     return response.data;
   };
 
+  // this function will be passed to a DogCard component. The dogid is used to check if the selected dog should be added or removed from the favorites list
   const handleFavorite = (id: string) => {
     setFavorites((prev) =>
       prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
     );
   };
 
+  // handleMatch sends a req to find the dogId for the matched dog, then a separate req is sent to get the dog object details corresponding to that id. Those details will be used to populate the MatchedDogModal.
+  // handleMatch also sets isModalOpen to true in order for the modal to render
   const handleMatch = async () => {
     const response = await axios.post(`${baseUrl}/dogs/match`, favorites, {
       withCredentials: true,
@@ -110,6 +110,7 @@ const SearchResults = () => {
     setIsModalOpen(true);
   };
 
+  // handleBreedChange adds breed to BreedFilter unless it is already part of BreedFilter, then that breed is removed
   const handleBreedChange = (breed: string) => {
     if (breedFilter.includes(breed)) {
       setBreedFilter((prev) => prev.filter((b) => b !== breed));
@@ -118,26 +119,23 @@ const SearchResults = () => {
     }
   };
 
+  // onEnter, handleZipcodeKeyDown adds zipcodes to the zipcode filter, and then clears the input field
   const handleZipcodeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const zipcode = zipcodeInput.trim();
       if (zipcode && !zipcodeFilter.includes(zipcode)) {
         setZipcodeFilter((prev) => [...prev, zipcode]);
       }
-      setZipcodeInput(""); // Clear the input field
+      setZipcodeInput("");
     }
   };
 
+  // handleNext checks if there are more dog objects to be rendered. If so, it uses the saved nextReq to query the next page of results. nextReq and prevReq are updated. dogs state var is updated to render the appropriate dogs. page state is incremented.
   const handleNext = async () => {
-    console.log("handlenext");
-    console.log("nextReq: ", nextReq);
-
     if (total > page * 12) {
       const response = await axios.get(`${baseUrl}${nextReq}`, {
         withCredentials: true,
       });
-      console.log("response", response);
-
       const dogIds = response.data.resultIds;
       setNextReq(response.data.next);
       setPrevReq(response.data.prev);
@@ -167,10 +165,9 @@ const SearchResults = () => {
     setZipcodeFilter([]);
   };
 
-
   return (
-    <div className="p-4 flex flex-col min-h-screen">
-      <div className="mb-4 flex items-center justify-between">
+    <main className="p-4 flex flex-col min-h-screen">
+      <header className="mb-4 flex items-center justify-between">
         <h1 className="text-4xl font-semibold">Find A Dog To Adopt</h1>
         {/* matching button */}
         <button
@@ -179,7 +176,7 @@ const SearchResults = () => {
         >
           Get Matched With A Dog!
         </button>
-      </div>
+      </header>
 
       {/* Modal will conditionally render dog card when client selects match button */}
       <MatchedDogModal
@@ -188,7 +185,7 @@ const SearchResults = () => {
       >
         {matchedDog && (
           <div>
-            <h2 className="text-xl font-semibold mb-2"> 
+            <h2 className="text-xl font-semibold mb-2">
               You matched with {matchedDog.name}!
             </h2>
             <DogCard
@@ -218,7 +215,7 @@ const SearchResults = () => {
       />
 
       {/* sort dropdown */}
-      <div className="flex items-center space-x-4 mb-4">
+      <section className="flex items-center space-x-4 mb-4">
         <div className="flex space-x-4 ml-auto">
           <label htmlFor="sortOrder" className="font-semibold">
             Sort by:
@@ -232,10 +229,10 @@ const SearchResults = () => {
             <option value="desc">Z-A</option>
           </select>
         </div>
-      </div>
+      </section>
 
       {/* grid displaying filtered results */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center items-center">
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center items-center">
         {dogs.map((dog) => (
           <DogCard
             key={dog.id}
@@ -249,25 +246,28 @@ const SearchResults = () => {
             handleFavorite={handleFavorite}
           />
         ))}
-      </div>
+      </section>
 
       {/* next and prev buttons */}
-      <div className="mt-4 px-32 py-6 flex justify-between">
+      <nav className="mt-4 px-32 py-6 flex justify-between">
         <button
           onClick={handlePrev}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Previous Page
         </button>
+
+        <div>{page} of {Math.ceil(total/SIZE)}</div>
+
         <button
           onClick={handleNext}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Next Page
         </button>
-      </div>
-    </div>
+      </nav>
+    </main>
   );
 };
 
-export default SearchResults;
+export default SearchPage;

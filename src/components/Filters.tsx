@@ -1,4 +1,3 @@
-// src/components/Filters.tsx
 import React from "react";
 import BreedFilter from "./BreedFilter";
 import ZipcodeFilter from "./ZipcodeFilter";

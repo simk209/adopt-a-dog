@@ -1,7 +1,7 @@
 # Adopt a Dog
 
 ## Description
-This project is a website designed to help users search for and get matched with shelter dogs. Users have the ability to filter dogs by breed or zipcode, and they can sort search results alphabetically by breed in ascending or descending order. Additionally, users can mark dogs as favorites and then generate a match based on their preferences.
+This project is a website designed to help users search for and get matched with shelter dogs. Users have the ability to filter dogs by breed or zipcode, and they can sort search results alphabetically by breed in ascending or descending order. Additionally, users can mark dogs as favorites and then generate a match from that list of favorites.
  
 
 ## Installation
@@ -34,5 +34,12 @@ npm run dev
 - `npm run preview`: Previews the production build locally.
 
 ## Future Considerations
-While this app should meet basic requirements, it would greatly benefit from other UX focused features (including more detailed paginaton showing users current page and total results, and the abiity to skip pages, a more user-friendly filter that shows all fitlers applied and allows you to clear individual filters rather than reseting all filters, the ability to reset favorites, etc)
-Additioally, it would benefit from testing. Other areas for improvement include makingthe site more resposnsive. Currently the grid displayng dog objects does change depending on the screensize, however filtering should change as well, perhaps rendering a filtering icon that opens up inot a modal for smaller screens.  
+While this app should meet basic requirements, it would greatly benefit from other UX-focused features, including:
+
+- Improved pagination with the ability to skip to a specific page number.
+- A more user-friendly filter that shows all filters applied and allows users to clear individual filters rather than resetting all filters.
+- The ability to reset favorites.
+- A display of the favorites list (Currently the list is stored as a state variable but not shown to the user. They can only see the match generated from the favorites list)
+- Improved accessibility
+
+Additionally, it would benefit from comprehensive testing and improved responsiveness. Currently, the grid displaying dog objects changes depending on the screen size; however, filtering should also adapt, perhaps rendering a filtering icon that opens into a modal for smaller screens.

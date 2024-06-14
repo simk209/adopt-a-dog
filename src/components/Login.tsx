@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-const Login = ({
-  onLogin,
-}: {
+interface LoginProps {
   onLogin: (name: string, email: string) => void;
-}) => {
+}
+
+const Login = ({onLogin}:LoginProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 

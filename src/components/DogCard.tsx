@@ -1,6 +1,3 @@
-// src/components/DogCard.tsx
-import React from "react";
-
 interface DogCardProps {
   id: string;
   name: string;
@@ -12,7 +9,10 @@ interface DogCardProps {
   handleFavorite: (id: string) => void;
 }
 
-const DogCard: React.FC<DogCardProps> = ({
+// DogCard shows relevant dog object info, and inherits functionality to update favorites state variable via handleFavorite
+// (handleFavorite is defined in SearchPage)
+
+const DogCard = ({
   id,
   name,
   age,
@@ -21,12 +21,12 @@ const DogCard: React.FC<DogCardProps> = ({
   img,
   isFavorite,
   handleFavorite,
-}) => {
+}: DogCardProps) => {
   return (
-    <div className="max-w-xs w-72 rounded overflow-hidden shadow-lg">
+    <article className="max-w-xs w-72 rounded overflow-hidden shadow-lg">
       <img className="w-full h-80 object-cover" src={img} alt={name} />
       <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2">{name}</div>
+        <h2 className="font-bold text-xl mb-2">{name}</h2>
         <p className="text-gray-700 text-base">
           Age: {age}
           <br />
@@ -35,13 +35,14 @@ const DogCard: React.FC<DogCardProps> = ({
           Zipcode: {zipcode}
         </p>
         <button
+          aria-label={isFavorite ? "Unfavorite this dog" : "Favorite this dog"}
           className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={() => handleFavorite(id)}
         >
           {isFavorite ? "Unfavorite" : "Favorite"}
         </button>
       </div>
-    </div>
+    </article>
   );
 };
 

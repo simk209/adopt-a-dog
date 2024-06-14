@@ -1,6 +1,6 @@
 import Login from "./components/Login";
 import axios from "axios";
-import SearchResults from "./components/SearchResults";
+import SearchPage from "./components/SearchPage";
 import { useState } from "react";
 
 
@@ -21,8 +21,9 @@ function App() {
   };
 
   return (
+    // conditionally render SearchPage depending on if user has logged in (i.e. is authenticated)
     <div>
-      {authenticated ? <SearchResults /> : <Login onLogin={handleLogin} />}
+      {authenticated ? <SearchPage /> : <Login onLogin={handleLogin} />}
     </div>
   );
 }

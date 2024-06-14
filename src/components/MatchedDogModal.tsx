@@ -1,4 +1,3 @@
-// src/components/Modal.tsx
 import React from "react";
 
 interface MatchedDogModalProps {
@@ -7,11 +6,11 @@ interface MatchedDogModalProps {
   children: React.ReactNode;
 }
 
-const MatchedDogModal: React.FC<MatchedDogModalProps> = ({
+const MatchedDogModal = ({
   isOpen,
   onClose,
   children,
-}) => {
+}:MatchedDogModalProps) => {
   if (!isOpen) return null;
 
   return (
